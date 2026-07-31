@@ -1,0 +1,19 @@
+{
+    "employees": {
+        "1002": {
+            "name": "Sarah Whitfield",
+            "department": "IT",
+            "position": "Software Development"
+        }
+    },
+    "attendance": [
+        {
+            "employee_id": "1002",
+            "status": "Present"
+        },
+        {
+            "employee_id": "1002",
+            "status": "Absent"
+        }
+    ]
+}
