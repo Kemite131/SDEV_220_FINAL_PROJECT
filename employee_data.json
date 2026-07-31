@@ -4,6 +4,16 @@
             "name": "Sarah Whitfield",
             "department": "IT",
             "position": "Software Development"
+        },
+        "1003": {
+            "name": "Mary Johnson",
+            "department": "Human Resources",
+            "position": "HR Specialist"
+        },
+        "1001": {
+            "name": "John Smith",
+            "department": "IT",
+            "position": "Senior Data Analyst"
         }
     },
     "attendance": [

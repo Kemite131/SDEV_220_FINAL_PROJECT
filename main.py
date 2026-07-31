@@ -123,8 +123,14 @@ class EmployeeManagementGUI:
             text="Employee Records and Attendance"
         ).pack(pady=5)
 
-        self.output_text = tk.Text(root, width=85, height=20)
-        self.output_text.pack(padx=10, pady=10)
+        self.output_text = tk.Text(root, width=85, height=10)
+        self.output_text.pack(padx=10, pady=(5, 8))
+
+        tk.Label(
+            root,
+            text="Created by Oluwakemi Osho | Client: Silver Oak Tech Solutions",
+            font=("Arial", 10, "italic")
+        ).pack(pady=(0, 8))
 
     def get_form_data(self):
         employee_id = self.employee_id_entry.get().strip()
@@ -317,11 +323,7 @@ class EmployeeManagementGUI:
 
         for employee_id, status in records:
             employee = self.system.search_employee(employee_id)
-
-            if employee:
-                employee_name = employee.name
-            else:
-                employee_name = "Unknown Employee"
+            employee_name = employee.name if employee else "Unknown Employee"
 
             self.output_text.insert(
                 tk.END,
