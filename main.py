@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+
 from employee_management_system import EmployeeManagementSystem
 
 
@@ -8,7 +9,7 @@ class EmployeeManagementGUI:
         self.system = EmployeeManagementSystem()
         self.root = root
         self.root.title("Employee Management System")
-        self.root.geometry("750x600")
+        self.root.geometry("760x650")
 
         tk.Label(
             root,
@@ -43,54 +44,86 @@ class EmployeeManagementGUI:
         self.position_entry = tk.Entry(form_frame, width=30)
         self.position_entry.grid(row=3, column=1, padx=5, pady=5)
 
+        tk.Label(form_frame, text="Attendance:").grid(
+            row=4, column=0, padx=5, pady=5, sticky="e"
+        )
+
+        self.attendance_status = tk.StringVar(value="Present")
+
+        attendance_menu = tk.OptionMenu(
+            form_frame,
+            self.attendance_status,
+            "Present",
+            "Absent"
+        )
+        attendance_menu.config(width=25)
+        attendance_menu.grid(row=4, column=1, padx=5, pady=5)
+
         button_frame = tk.Frame(root)
         button_frame.pack(pady=10)
 
         tk.Button(
             button_frame,
             text="Add Employee",
-            width=15,
+            width=16,
             command=self.add_employee
         ).grid(row=0, column=0, padx=5, pady=5)
 
         tk.Button(
             button_frame,
             text="Search Employee",
-            width=15,
+            width=16,
             command=self.search_employee
         ).grid(row=0, column=1, padx=5, pady=5)
 
         tk.Button(
             button_frame,
             text="Update Employee",
-            width=15,
+            width=16,
             command=self.update_employee
         ).grid(row=0, column=2, padx=5, pady=5)
 
         tk.Button(
             button_frame,
             text="Delete Employee",
-            width=15,
+            width=16,
             command=self.delete_employee
         ).grid(row=1, column=0, padx=5, pady=5)
 
         tk.Button(
             button_frame,
             text="Display All",
-            width=15,
+            width=16,
             command=self.display_all
         ).grid(row=1, column=1, padx=5, pady=5)
 
         tk.Button(
             button_frame,
             text="Clear Fields",
-            width=15,
+            width=16,
             command=self.clear_fields
         ).grid(row=1, column=2, padx=5, pady=5)
 
-        tk.Label(root, text="Employee Records").pack(pady=5)
+        tk.Button(
+            button_frame,
+            text="Mark Attendance",
+            width=16,
+            command=self.mark_attendance
+        ).grid(row=2, column=0, padx=5, pady=5)
 
-        self.output_text = tk.Text(root, width=85, height=18)
+        tk.Button(
+            button_frame,
+            text="View Attendance",
+            width=16,
+            command=self.view_attendance
+        ).grid(row=2, column=1, padx=5, pady=5)
+
+        tk.Label(
+            root,
+            text="Employee Records and Attendance"
+        ).pack(pady=5)
+
+        self.output_text = tk.Text(root, width=85, height=20)
         self.output_text.pack(padx=10, pady=10)
 
     def get_form_data(self):
@@ -105,7 +138,10 @@ class EmployeeManagementGUI:
         employee_id, name, department, position = self.get_form_data()
 
         if not employee_id or not name or not department or not position:
-            messagebox.showerror("Input Error", "Please complete all fields.")
+            messagebox.showerror(
+                "Input Error",
+                "Please complete all employee fields."
+            )
             return
 
         success, message = self.system.add_employee(
@@ -126,13 +162,19 @@ class EmployeeManagementGUI:
         employee_id = self.employee_id_entry.get().strip()
 
         if not employee_id:
-            messagebox.showerror("Input Error", "Enter an employee ID.")
+            messagebox.showerror(
+                "Input Error",
+                "Enter an employee ID."
+            )
             return
 
         employee = self.system.search_employee(employee_id)
 
         if employee is None:
-            messagebox.showerror("Error", "Employee not found.")
+            messagebox.showerror(
+                "Error",
+                "Employee not found."
+            )
             return
 
         self.name_entry.delete(0, tk.END)
@@ -148,7 +190,10 @@ class EmployeeManagementGUI:
         employee_id, name, department, position = self.get_form_data()
 
         if not employee_id or not name or not department or not position:
-            messagebox.showerror("Input Error", "Please complete all fields.")
+            messagebox.showerror(
+                "Input Error",
+                "Please complete all employee fields."
+            )
             return
 
         success, message = self.system.update_employee(
@@ -168,7 +213,10 @@ class EmployeeManagementGUI:
         employee_id = self.employee_id_entry.get().strip()
 
         if not employee_id:
-            messagebox.showerror("Input Error", "Enter an employee ID.")
+            messagebox.showerror(
+                "Input Error",
+                "Enter an employee ID."
+            )
             return
 
         success, message = self.system.delete_employee(employee_id)
@@ -186,8 +234,17 @@ class EmployeeManagementGUI:
         employees = self.system.get_all_employees()
 
         if not employees:
-            self.output_text.insert(tk.END, "No employee records available.")
+            self.output_text.insert(
+                tk.END,
+                "No employee records available."
+            )
             return
+
+        self.output_text.insert(
+            tk.END,
+            "Employee Records\n"
+            f"{'=' * 45}\n"
+        )
 
         for employee in employees:
             employee_id, name, department, position = employee.get_details()
@@ -201,11 +258,68 @@ class EmployeeManagementGUI:
                 f"{'-' * 45}\n"
             )
 
+    def mark_attendance(self):
+        employee_id = self.employee_id_entry.get().strip()
+        status = self.attendance_status.get()
+
+        if not employee_id:
+            messagebox.showerror(
+                "Input Error",
+                "Enter an employee ID."
+            )
+            return
+
+        success, message = self.system.mark_attendance(
+            employee_id,
+            status
+        )
+
+        if success:
+            messagebox.showinfo("Success", message)
+            self.view_attendance()
+        else:
+            messagebox.showerror("Error", message)
+
+    def view_attendance(self):
+        self.output_text.delete("1.0", tk.END)
+
+        records = self.system.get_attendance_records()
+
+        if not records:
+            self.output_text.insert(
+                tk.END,
+                "No attendance records available."
+            )
+            return
+
+        self.output_text.insert(
+            tk.END,
+            "Attendance Records\n"
+            f"{'=' * 45}\n"
+        )
+
+        for employee_id, status in records:
+            employee = self.system.search_employee(employee_id)
+
+            if employee:
+                employee_name = employee.name
+            else:
+                employee_name = "Unknown Employee"
+
+            self.output_text.insert(
+                tk.END,
+                f"Employee ID: {employee_id}\n"
+                f"Name: {employee_name}\n"
+                f"Status: {status}\n"
+                f"{'-' * 45}\n"
+            )
+
     def clear_fields(self):
         self.employee_id_entry.delete(0, tk.END)
         self.name_entry.delete(0, tk.END)
         self.department_entry.delete(0, tk.END)
         self.position_entry.delete(0, tk.END)
+        self.attendance_status.set("Present")
 
 
 def main():
