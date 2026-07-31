@@ -219,6 +219,23 @@ class EmployeeManagementGUI:
             )
             return
 
+        employee = self.system.search_employee(employee_id)
+
+        if employee is None:
+            messagebox.showerror(
+                "Error",
+                "Employee not found."
+            )
+            return
+
+        confirmation = messagebox.askyesno(
+            "Confirm Delete",
+            f"Are you sure you want to delete {employee.name}?"
+        )
+
+        if not confirmation:
+            return
+
         success, message = self.system.delete_employee(employee_id)
 
         if success:
